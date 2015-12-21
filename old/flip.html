@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+
+  <link rel="apple-touch-icon" sizes="57x57" href="http://htmlcompass.com/icons/apple-touch-icon-57x57.png" />
+  <link rel="apple-touch-icon" sizes="72x72" href="http://htmlcompass.com/icons/apple-touch-icon-72x72.png" />
+  <link rel="apple-touch-icon" sizes="114x114" href="http://htmlcompass.com/icons/apple-touch-icon-114x114.png" />
+  
+  <!-- Home screen icons -->
+  <link rel="apple-touch-icon" sizes="57x57" href="http://www.chicagogrooves.com/tricks/back.jpg" />
+  <link rel="apple-touch-icon" sizes="72x72" href="http://www.chicagogrooves.com/tricks/back.jpg" />
+  <link rel="apple-touch-icon" sizes="114x114" href="http://www.chicagogrooves.com/tricks/back.jpg" />
+  
+  <title>Fliparoo</title>
+    <style>
+      body{ min-height: 800px; }
+      #debug{ display:none }
+      .swami-response{
+        -webkit-animation-duration: 2s;
+        -webkit-animation-name: swami;        
+      }
+      @-webkit-keyframes swami{
+        from{
+          -webkit-transform: rotate(0deg);
+        }
+        to{
+          -webkit-transform: rotate(360deg);
+        }
+      }
+    </style>
+
+    <script type="text/javascript" src="/js/zepto.min.js"></script>
+    <script type="text/javascript" src="/js/zepto.touch.js"></script>
+    
+    <script type="text/javascript">
+    function hideAddressBar()
+    {
+        if(!window.location.hash)
+        {
+            if(document.height < window.outerHeight)
+            {
+                document.body.style.height = (window.outerHeight + 50) + 'px';
+            }
+
+            setTimeout( function(){ window.scrollTo(0, 1); }, 50 );
+        }
+        }
+    window.addEventListener("load", hideAddressBar );
+    window.addEventListener("orientationchange", hideAddressBar );
+    </script>
+  </head>
+  <body>
+    <script type="text/javascript">
+    var reveals = ["6clubs.png", "8hearts.png"];
+    var wasFaceUp = true;
+    var hasBeenTapped = false;
+    flipsBeforeTap = 0;
+    timesDown = 0;
+    Effects = {
+      firstSwamiResponse: function(){
+        setTimeout( function(){
+          $("#card").addClass("swami-response")
+          setTimeout( function(){
+            $("#card").attr("src", reveals[0] );
+          }, 2200 );
+        }, 3000);
+      },
+      actualReveal: function(){
+        $("#card").attr("src", reveals[1] );
+      }
+    }
+
+    var Orientation = {
+      changed: function(event) {
+        // event.accelerationIncludingGravity.x
+        var isFaceUp = event.accelerationIncludingGravity.z < 0
+
+        $("#facing").text( isFaceUp ? "UP": "DOWN" );
+        
+        if(!isFaceUp){
+          if(wasFaceUp != isFaceUp && !isFaceUp)
+            timesDown++;
+            
+          $("#timesdown").text(timesDown);
+        
+          if( timesDown>flipsBeforeTap && hasBeenTapped )
+            Effects.actualReveal();
+            
+        }
+        wasFaceUp = isFaceUp
+      },
+      reupped: function(event){;}
+    }
+    
+    window.ondevicemotion = Orientation.changed;
+    
+    $(function() {
+      //hack to hide address bar
+      //setTimeout(function(){
+      //    window.scrollTo(10, 10);
+      //}, 0);
+      
+      //hack to preload images (old-school style !)
+      var i1=new Image(); i1.src = reveals[0];
+      var i2=new Image(); i2.src = reveals[1];
+
+      $("#card").on('doubleTap', function(){
+        if(timesDown >= flipsBeforeTap){
+          Effects.firstSwamiResponse();
+          hasBeenTapped = true;
+        }
+      })
+
+    });    
+    
+    </script>
+    
+    <script type="text/javascript" id="live-reload">
+      if(location.host.indexOf(".local")>-1 && navigator.userAgent.indexOf("OS X 10") < 0){ //not on development laptop
+        document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')
+      }
+    </script>
+
+    <div>
+      <!-- http://openclipart.org/image/800px/svg_to_png/23105/nicubunu_White_deck_6_of_clubs.png -->
+      <img id="card" src="back.jpg" height="400"/>
+    </div>
+    
+    <pre id="debug">
+      Facing: <span id="facing"/>
+      Times Down: <span id="timesdown"/>
+      Device Type: <span id="device"/>
+    </pre>
+    
+    
+    <script type="text/javascript" id="debugjs">
+    function getDeviceText(){
+      return $.os.ipad ? "ipad" : $.os.iphone ? "iphone" : $.os.android ? "android" : "computer/laptop";
+    }
+    $(function(){ 
+      $("#debug #device").text( getDeviceText() );
+    });
+    </script>
+    
+  </body>
+</html>

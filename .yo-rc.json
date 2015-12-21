@@ -1,0 +1,7 @@
+{
+  "generator-react-webpack": {
+    "appName": "fliparoo",
+    "style": "css",
+    "postcss": false
+  }
+}
