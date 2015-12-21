@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name=viewport content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="white">
+<meta name="description" content="Full Screen SVG">
+  <meta charset="utf-8">
+  <title>Responsive Playing Card</title>
+  <script src="http://code.interactjs.io/v1.2.6/interact.min.js"></script>
+  <base href="http://d2jksv3bi9fv68.cloudfront.net/cards/"/>
+  <style>
+  html, body{
+         height: 100%;
+
+  }
+     body {
+       background: #fff;
+       margin: 0;
+       background-image: url(felt.jpg)
+     }
+
+     .center {
+       display: block;
+       position: absolute;
+       top: 20%;
+       left: 20%;
+       width: 60%;
+       height: 60%;
+       background: #fff;
+       z-index: -1;
+     }
+
+     .face {
+       stroke: #000;
+       stroke-width: 20px;
+       stroke-linecap: round
+     }
+
+  /* .spread img {
+    border-radius: 3px;
+    box-shadow: -1px 1px 1px #aaaaaa;
+  }
+   */
+  .card {
+    width: 100%
+  }
+  </style>
+</head>
+<body>
+
+    <img class="card" src="spread-min.svg"/>
+  </div>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    interact('.card')
+    .draggable({
+      onMove: dragMoveListener,
+      inertia: true
+    });
+  });
+
+function dragMoveListener (event) {
+  var target = event.target;
+  event.target.x.baseVal.value += event.dx;
+  event.target.y.baseVal.value += event.dy;
+}
+
+window.dragMoveListener = dragMoveListener;
+  </script>
+</body>
+</html>
